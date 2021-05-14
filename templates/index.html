@@ -3,15 +3,45 @@
 	<title>
 		test
 	</title>
-</head>
-<body>
+	<link rel="stylesheet" href="{{url_for('static', filename='css/drawflow.min.css')}}" />
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/beautiful.css')}}" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='js/drawflow.min.js')}}"></script>
+</head>
+<body>
+	<div id="drawflow">
+
+
+	</div>
     <script>
+		var id = document.getElementById("drawflow");
+		const editor = new Drawflow(id);
+		editor.reroute = true;
+		editor.start();
+
 		const socket = io.connect('http://' + document.domain + ":" + location.port);
 		socket.on('receive', (msg) => {
 			console.log(msg);
+			const html = createFrameHTML(msg.url_info, msg.res_header);
+			insertNode("test", html);
 		})
+
+		function createFrameHTML(title, content){
+			return `
+				<div>
+					<div class="title-box">${title}</div>
+					<div class="box">
+						1
+					</div>
+				</div>
+			`;
+		}
+
+		function insertNode(name, html){
+			var data = { "name": '' };
+			return editor.addNode('github', 0, 1, 150, 300, 'github', data, html);
+		}
 	</script>
 </body>
 </html>
